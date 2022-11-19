@@ -56,11 +56,10 @@ function scss() {
 }
 
 function image() {
-  return src("src/images/*.{png,jpg,svg,jpeg,jfif,gif,webp}")
+  return src("./src/images/**.{png,jpg,svg,jpeg,jfif,gif,webp}")
     .pipe(webp())
-    .pipe(dest("build/images/"));
+    .pipe(dest("./build/images/"));
 }
-
 function js() {
   return src("src/js/**.js")
     .pipe(
@@ -85,12 +84,14 @@ function serve() {
   sync.init({
     server: "./build",
   });
-  watch("./src/pages/**.html", series(indexHtml)).on("change", sync.reload);
-  watch("./src/style/**.scss", series(scss)).on("change", sync.reload);
   watch("./src/pages/**.html", series(html)).on("change", sync.reload);
+  watch("./src/style/**.scss", series(scss)).on("change", sync.reload);
+  watch("./src/**.html", series(indexHtml)).on("change", sync.reload);
   watch("./src/js/**.js", series(js)).on("change", sync.reload);
   watch("./src/fonts/**.{ttf,ttf2}", series(fonts)).on("change", sync.reload);
+  watch("./src/images/**.{png,jpg,svg,jpeg,jfif,gif,webp}", series(image)
+  ).on("change", sync.reload);
 }
 
 exports.del = clear;
-exports.default = series(scss, indexHtml, image, html, js, fonts, serve);
+exports.default = series(clear, image, scss, indexHtml, html, js, fonts, serve);
